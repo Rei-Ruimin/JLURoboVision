@@ -1,37 +1,37 @@
-# 吉林大学TARS-GO战队视觉代码JLURoboVision
+# Jilin University Team TARS-GO Vision code  JLURoboVision
 ---
 
-## 致谢  
-首先在开头感谢东南大学2018年开源代码以及深圳大学、上海交大2019年开源代码对本套代码的完成提供的巨大帮助，希望这套代码也能够帮助其他队伍在 RM 这个舞台上得到更大的提升。
+## Thanks
+First we'd like to thank Southeast University for its 2018 open source, Shenzhen University and SJTU for their 2019 open sources, they gave great contribution to this project and we hope this one could also help other teams to improve in RM competition.
 
 ---
-## 介绍  
-本代码是吉林大学TARS-GO战队Robomaster2020赛季步兵视觉算法，主要模块分为**装甲板识别**、**大风车能量机关识别**、**角度解算**、**相机驱动**及**串口/CAN通信**。  
+## Introduction
+This project is the infantry vision algorithm for Robomaster2020 competition of Team TARS-GO from Jilin University. There are five main modules: **Armor Detection**, **Power Rune Detection**, **Angle Calculation**, **Camera Driver** and **Serial Port/CAN Communication**.
 
 ---
-## 目录
-* [1. 功能介绍](#1功能介绍)
-* [2. 效果展示](#2效果展示)
-* [3. 依赖环境](#3依赖环境)
-* [4. 整体框架](#4整体框架)
-* [5. 实现方案](#5实现方案)
-* [6. 通讯协议](#6通信协议)
-* [7. 配置与调试](#7配置与调试)
-* [8. 总结展望](#8总结展望)
+## Directory
+* [1. Function Introduction](#1Function-Introduction)
+* [2. Show Results](#2Show-Results)
+* [3. Dependencies](#3Dependencies)
+* [4. Overall Framework](#4Overall-Framework)
+* [5. Implementation Plan](#5Implementation-Plan)
+* [6. Communication Protocol](#6Communication-Protocol)
+* [7. Configuration and Debugging](#7Configuration-and-Debugging)
+* [8. Summary and Outlook](#8Summary-and-Outlook)
 ---
-## 1.功能介绍
-|模块     |功能     |
+## 1.Function Introduction
+|Module    |Function     |
 | ------- | ------ |
-|装甲板识别| 检测敌方机器人装甲板位置信息并识别其数字 |
-|大风车能量机关识别| 检测待激活大风车扇叶目标位置信息 |
-|角度解算| 根据上述位置信息解算目标相对枪管的yaw、pitch角度及距离 |
-|相机驱动| 大恒相机SDK封装，实现相机参数控制及图像采集 |
-|串口/CAN通信| 与下位机通信，传输机器人姿态信息及操作手反馈视觉的控制信息 |
+|Armor Detection| Detect the position of enemy robot armors and identify the numbers |
+|Power Rune Detection|  Detect the position of inactived armor modules of Power Rune |
+|Angle Calculation| Calculate yaw, pitch angles and the distance between target and barrel based on above position information |
+|Camera Driver|  Use Daheng camera SDK package to implement camera parameters control and image acquisition |
+|Serial Port/CAN Communication| Communicate with the lower computer(下位机), transmit the robot posture information and the operator feedback of visual control information |
 ---
-## 2.效果展示
-### 装甲板识别
-装甲板识别采用基于OpenCV的传统算法实现装甲板位置检测，同时采用SVM实现装甲板数字识别。  
-考虑战场实际情况，机器人可打击有效范围在1m~7m之间，在此范围内，本套算法**装甲板识别率达98%**，识别得到装甲板在图像中四个顶点、中心点的坐标信息。  
+## 2.Show Results
+### Armor Detection
+Armor detection adopts the traditional algorithm based on OpenCV to achieve the position detection of armor plates, it also adopts SVM to achieve the number detection of armor plates.
+Considering the actual situation of the battlefield, the effective attack range of robots is between 1m and 7m. Within this range, **the armor detection rate of this algorithm is 98%**, and the coordinate information of the four vertices and center points of armor plates in the image can be obtained.
 <div align=center>**EnemyColor = BLUE; TargetNum = 1**</div>  
 
 <div align=center>
@@ -44,33 +44,32 @@
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/R.png" width = "600" alt="图2.2 装甲板识别"/>
 </div>  
 
-在640\*480图像分辨率下，**装甲板识别帧率可达340fps左右，引入ROI之后可达420fps**。但考虑到识别帧率对于电控机械延迟的饱和，取消引入ROI操作，以此避免引入ROI之后无法及时探测全局视野情况的问题，加快机器人自瞄响应。  
-<div align=center>**640\*480（峰值可达340FPS）**</div>  
+With 640\*480 image resolution, **the armor detection frame rate is about 340fps, and can achive 420fps after the introduction of ROI**. However, considering the saturation of the recognition frame rate to the electronic control mechanical delay, the introduction of ROI operation is cancelled to avoid the problem that robots cannot detect global field of view in time, and to speed up the self-targeting process of robots.
+<div align=center>**640\480（maximum 340FPS）**</div>  
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/armor640480.gif" width = "600" alt="图2.3 装甲板实时识别帧率"/>
 </div>  
 
-<div align=center>**320\*240（峰值可达1400FPS）**</div>  
+<div align=center>**320*240（maximum 1400FPS）**</div>  
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/armor320240.gif" width = "600" alt="图2.4 装甲板实时识别帧率"/>
 </div> 
 
-
-装甲板数字识别采用SVM，通过装甲板位置信息裁剪二值化后的装甲板图像并透射变换，投入训练好的SVM模型中识别，**数字识别准确率可达98%**。  
+Armor number detection adopts SVM, crops the binarized armor image based on calculated armor position, applies transmission transformation and then uses trained SVM model to classify the armor number. **The accuracy rate of number detection can reach 98%**.
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/RealtimeArmor.gif" width = "600" alt="图2.5 装甲板数字识别"/>
 </div> 
 
  
-### 大风车能量机关识别  
+### Power Rune Detection
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/windmill.gif" width = "600" alt="图2.6 大风车识别演示"/>
 </div> 
  
-### 角度解算  
-角度解算方面使用了两种解算方法分距离挡位运行。第一档使用P4P算法，第二档使用小孔成像原理的PinHole算法。  
-此外还引入了相机-枪口的Y轴距离补偿及重力补偿。  
-使用标定板测试，角度解算计算的距离误差在10%以内，角度基本与实际吻合。  
+### Angle Calculation 
+In terms of angle calculation, two calculation methods are used for diffrent distances. The first one uses the P4P algorithm, and the second one uses the PinHole algorithm based on small hole imaging.
+In addition, we also introduced the camera-muzzle Y-axis distance compensation and gravity compensation.
+Test with the calibration board, the distance error of angle calculation is within 10%, and the calculated angle is basically consistent with the real one.
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/pos.jpg" width = "600" alt="图2.7 角度解算测试图"/>
 </div> 
@@ -79,65 +78,68 @@
 </div> 
  
 ---
-## 3.依赖环境
-### 硬件设备
-|硬件|型号|参数|
+## 3.Dependencies
+### Hardware
+|Hardware|Model|Parameter|
 |---|---|---|
-|运算平台|Manifold2-G|Tx2|
-|相机|大恒相机MER-050|分辨率640*480 曝光值3000~5000|
-|镜头|M0814-MP2|焦距8mm 光圈值4|
-### 软件设备
-|软件类型|型号|
+|Computing Platform|Manifold2-G|Tx2|
+|Camera|Daheng Camera MER-050|Resolution 640*480, Exposure Value 3000~5000|
+|Lens|M0814-MP2|Focal length 8mm, Aperture value 4|
+### Software
+|Software|Model|
 |---|---|
 |OS|Ubuntu 16.04/Ubuntu18.04|
 |IDE|Qt Creator-4.5.2|
 |Library|OpenCV-3.4.0|
 |DRIVE|Galaxy SDK|
 ---
-## 4.整体框架
-### 文件树  
+## 4.Overall Framework
+### File Tree 
 ```
 JLURoboVision/
 ├── AngleSolver
-│   └── AngleSolver.h（角度解算模块头文件）
-│   ├── AngleSolver.cpp（角度解算模块源文件）
+│   └── AngleSolver.h（header file of angle calculation module）
+│   ├── AngleSolver.cpp（source file of angle calculation module）
 ├── Armor
-│   ├── Armor.h（装甲板识别模块头文件）
-│   ├── LightBar.cpp（灯条类源文件）
-│   ├── ArmorBox.cpp（装甲板类源文件）
-│   ├── ArmorNumClassifier.cpp（装甲板数字识别类源文件）
-│   ├── findLights.cpp（灯条监测相关函数源文件）
-│   └── matchArmors.cpp（装甲板匹配相关函数源文件）
-│   ├── ArmorDetector.cpp（装甲板识别子类源文件）
+│   ├── Armor.h（header file of armor detection module）
+│   ├── LightBar.cpp（source file of light bar class ）
+│   ├── ArmorBox.cpp（source file of armor plate class ）
+│   ├── ArmorNumClassifier.cpp（source file of armor number classify class）
+│   ├── findLights.cpp（source file of light bar finder related functions）
+│   └── matchArmors.cpp（source file of armor source file matching related functions）
+│   ├── ArmorDetector.cpp（source file of armor plate detection subclass）
 ├── General
-│   ├── 123svm.xml（SVM模型文件）
-│   ├── camera_params.xml（相机参数文件）
-│   └── General.h（公有内容声明头文件）
+│   ├── 123svm.xml（SVM module file）
+│   ├── camera_params.xml（camera parameter file）
+│   └── General.h（header file of general content declaration）
 ├── GxCamera
-│   ├── GxCamera.h（大恒相机类头文件）
-│   ├── GxCamera.cpp（大恒相机类封装源文件）
-│   └── include（相机SDK包含文件）
+│   ├── GxCamera.h（header file of Daheng camera class）
+│   ├── GxCamera.cpp（source file of packaging Daheng camera calss）
+│   └── include（files included by camera SDK）
 │       ├── DxImageProc.h
 │       └── GxIAPI.h
 └── Serial
-│   ├──  Serial.h（串口头文件）
-│   └──Serial.cpp（串口源文件）
+│   ├──  Serial.h（header file of serial port）
+│   └──Serial.cpp（source file of serial port）
 ├── Main
-│   ├── ArmorDetecting.cpp（装甲板识别线程）
-│   ├── ImageUpdating.cpp（图像更新线程）
-│   └── main.cpp（main函数，程序主入口源文件）
+│   ├── ArmorDetecting.cpp（armor detection thread）
+│   ├── ImageUpdating.cpp（image updating thread）
+│   └── main.cpp（program main entrance）
 
 ```
-### 整体算法流程图  
+### Overall Framework 
 <div align=center>
 <img src="https://github.com/QunShanHe/JLURoboVision/blob/master/Assets/Armor.png " width = "800" alt="图4.1 自瞄算法流程图"/>
 </div>  
 
 ---
-## 5.实现方案  
-### 装甲板识别  
+## 5.Implementation Plan
+### Armor Detection
 装甲板识别使用基于检测目标特征的OpenCV传统方法，实现检测识别的中心思想是找出图像中所有敌方颜色灯条，并使用找出的灯条一一拟合并筛选装甲板。  
 主要步骤分为：**图像预处理**、**灯条检测**、**装甲板匹配**、**装甲板数字识别**及最终的**目标装甲板选择**。  
+Armor detection uses the traditional OpenCV method based on detecting target features. The main idea of detection is to find all light bars with enemy color in the image, and use these light bars to fit armor plates group by group.
+The main steps are: image preprocessing, light bar detection, armor plate matching, armor plate number classif recognition and final target armor plate selection.
+
 1. **图像预处理**  
 为检测红/蓝灯条，需要进行颜色提取。颜色提取基本思路有BGR、HSV、通道相减法。  
 然而，前两种方法由于需要遍历所有像素点，耗时较长，因此我们选择了**通道相减法**进行颜色提取。  
@@ -237,7 +239,7 @@ void eraseErrorRepeatArmor(vector<ArmorBox> & armors)
 </div> 
 
 ---
-## 6.通讯协议  
+## 6.Communication Protocol
 上下板之间的通信逻辑，主要由我们自定的通信协议体现：  
 协议共有16个字节，包括帧头占用的1字节，校验位需要的1字节，数据位的12个字节，以及两个字节的标志位。可以满足上位机与主控板之间的通信需求，且尽量精简了数据包体量以提高传输速度。  
 |Byte0|Byte1|Byte2|Byte3|Byte4|Byte5|Byte6|Byte7|
@@ -254,7 +256,7 @@ void eraseErrorRepeatArmor(vector<ArmorBox> & armors)
 > * 模式选择 - 后五位（0 不处理，1-8留作模式选择， stm32 -> PC，1为自瞄，2为大风车）
 > * Fire-cmd是否开火：8 bit char - 在视觉判定枪口（摄像头）对准目标在误差范围内时发送——0 为不开火，1 为开火
 ---
-## 7.配置与调试
+## 7.Configuration and Debugging
 ### 运行平台搭建  
 1. Qt（及QtCreator）安装
 2. OpenCV库安装及配置
@@ -300,7 +302,7 @@ detector.showDebugInfo(0, 0, 0, 1, 0, 0, 0);
 angleSolver.showDebugInfo(1, 1, 1, 1, 1, 0);
 ```
 ---
-## 8.总结展望
+## 8.Summary and Outlook
 ### 总结  
 本套代码主要实现了装甲板识别及大风车的识别这两个模块，结合角度解算模块对识别到的目标信息的解算，获取云台枪口控制转角，随后通过串口传输给下位机。  
 装甲板识别与大风车识别模块性能表现不错，识别率和帧率满足比赛需求；角度解算模块经过设计，提升了准确性及鲁棒性。    
