@@ -257,26 +257,26 @@ void eraseErrorRepeatArmor(vector<ArmorBox> & armors)
 > * Fire-cmd是否开火：8 bit char - 在视觉判定枪口（摄像头）对准目标在误差范围内时发送——0 为不开火，1 为开火
 ---
 ## 7.Configuration and Debugging
-### 运行平台搭建  
-1. Qt（及QtCreator）安装
-2. OpenCV库安装及配置
-3. 大恒相机驱动安装及配置
+### 运行平台搭建 - Construct the Platform
+1. Qt（及QtCreator）安装 - Qt (& QtCreator) Installation
+2. OpenCV库安装及配置 - OpenCV Library Installation & Deployment
+3. 大恒相机驱动安装及配置 - DaHeng Camera Driver Installation & Deployment
 
-### 代码调试
-1. 使用QtCreator打开JLURoboVision.pro（或直接在根目录中make）
-2. 检查并修改camera_params.xml 及123svm.xml路径
-3. 编译运行
+### 代码调试 - Code Debugging
+1. 使用QtCreator打开JLURoboVision.pro（或直接在根目录中make）- Use QtCreator to Open JLURoboVision.pro (or 'make' directly in root directory)
+2. 检查并修改camera_params.xml 及123svm.xml路径 - Check & Modify path/to/camera_params.xml and path/to/123svm.xml
+3. 编译运行 - Compile & Run
 
-### 单独模块调试  
-可参考下列示例代码：  
-[JLUVision_Demos](https://gitee.com/mountain123/JLUVision_Demos)各示例程序代码库  
-[Armor_Demo](https://gitee.com/mountain123/JLUVision_Demos/tree/master/Armor_Demo)为装甲板识别模块演示程序，可在Linux(.pro)/Windows(.sln)运行。  
-[AngleSolver_Armor_GxCamera](https://gitee.com/mountain123/JLUVision_Demos/tree/master/Anglesolver_Armor_GxCamera_Demo)为大恒相机采图+装甲板+角度解算演示程序，需要连接大恒相机在Linux下运行。  
+### 单独模块调试 - Unit-Module Debugging
+可参考下列示例代码 - the following are codes to reference to：  
+[JLUVision_Demos](https://gitee.com/mountain123/JLUVision_Demos)各示例程序代码库 - each sample code program library
+[Armor_Demo](https://gitee.com/mountain123/JLUVision_Demos/tree/master/Armor_Demo)为装甲板识别模块演示程序，可在Linux(.pro)/Windows(.sln)运行。- demo of armor board detection module, can run on Linux(.pro)/Windows(.sln).
+[AngleSolver_Armor_GxCamera](https://gitee.com/mountain123/JLUVision_Demos/tree/master/Anglesolver_Armor_GxCamera_Demo)为大恒相机采图+装甲板+角度解算演示程序，需要连接大恒相机在Linux下运行。- demo of DaHeng camera's image capture + armor board + angle decoding program
 
 ### Debugging Tools  
-代码还自定义了一套调试用的函数，将灯条、装甲板识别、角度解算等信息进行可视化输出，并可通过键盘控制部分识别参数，为代码的调试和优化带来便利。  
+代码还自定义了一套调试用的函数，将灯条、装甲板识别、角度解算等信息进行可视化输出，并可通过键盘控制部分识别参数，为代码的调试和优化带来便利。- the code customized a set of functions for debugging, visualize and output light-bar detection, armor-board detection, and angle decoding results; avaliable controlling part of those configurations via keyboard, which convenience the code debugging process.
 ```
-//装甲板检测识别调试参数是否输出
+//装甲板检测识别调试参数是否输出 - Whether the armor board detection to identify whether the debugging parameters will have output
 //param:
 //		1.showSrcImg_ON,		  是否展示原图
 //		2.bool showSrcBinary_ON,  是否展示二值图
@@ -290,7 +290,7 @@ detector.showDebugInfo(0, 0, 0, 1, 0, 0, 0);
 ```
 
 ```
-//角度解算调试参数是否输出
+//角度解算调试参数是否输出 - Whether the angle decoding debugging parameters will have output
 //param:
 //		1.showCurrentResult,	  是否展示当前解算结果
 //		2.bool showTVec,          是否展示目标坐标
@@ -303,15 +303,18 @@ angleSolver.showDebugInfo(1, 1, 1, 1, 1, 0);
 ```
 ---
 ## 8.Summary and Outlook
-### 总结  
+### 总结 - Summary
 本套代码主要实现了装甲板识别及大风车的识别这两个模块，结合角度解算模块对识别到的目标信息的解算，获取云台枪口控制转角，随后通过串口传输给下位机。  
 装甲板识别与大风车识别模块性能表现不错，识别率和帧率满足比赛需求；角度解算模块经过设计，提升了准确性及鲁棒性。    
-同时，代码整体经过封装，具有较强的可移植性。  
-### 特色功能  
-1. 丰富的调试接口及数据可视化  
-代码配备了多个调试用函数，能将代码运行效果及计算参数通过图片或终端实时显示，便于代码调试优化。  
-2. 深入底层的图像处理  
-在预处理阶段，选用了通道相减进行颜色提取，然而通道相减法需要调用split及thresh等函数，耗时较长，于是我们经过分析算法特点，我们直接通过指针来遍历图像数据，大大加快了该步的运算速度。  
+同时，代码整体经过封装，具有较强的可移植性。
+This set of codes mainly implements the two modules of armor board detection and windmill detection, combined with the calculation of the detected target information by the angle decoding module, obtains the control angle of the gimbal muzzle, and then transmits it to the lower computer through the serial port.
+The performance of the armor board detection and windmill detection modules is good, and the recognition rate and frame rate meet the requirements of the game; the angle decoding module has been designed to improve the accuracy and robustness.
+At the same time, the code as a whole is encapsulated and has strong portability.
+### 特色功能 - Special Functionalities
+1. 丰富的调试接口及数据可视化 - Rich debugging interface and data visualization
+2. 代码配备了多个调试用函数，能将代码运行效果及计算参数通过图片或终端实时显示，便于代码调试优化。- The code is equipped with multiple debugging functions, which can display the code running result and calculation parameters in real time through pictures or terminals, which is convenient for code debugging and optimization.
+3. 深入底层的图像处理 - Deep into the underlying image processing
+在预处理阶段，选用了通道相减进行颜色提取，然而通道相减法需要调用split及thresh等函数，耗时较长，于是我们经过分析算法特点，我们直接通过指针来遍历图像数据，大大加快了该步的运算速度。- In the preprocessing stage, channel subtraction is used for color extraction. However, the channel subtraction method needs to call functions such as split and thresh, which takes a long time. Therefore, after analyzing the characteristics of the algorithm, we directly traverse the image data through the pointer, which greatly speeds up The calculation speed of this step.
 ```
 //pointer visits all the data of srcImg, the same to bgr channel split 通道相减法的自定义形式，利用指针访问，免去了split、substract和thresh操作，加速了1.7倍
 //data of Mat  bgr bgr bgr bgr
@@ -339,8 +342,8 @@ else if (enemyColor == BLUE)
 	}
 }
 ```
-3. 目标装甲板加权计分选取  
-目标装甲板的选取，我们结合了操作手指定兵种及装甲板实际打击特征（距离枪口的平移向量、打击面积大小）进行加权求和，最终选取打击度得分最大的作为目标装甲板。  
+4. 目标装甲板加权计分选取 - Target armor plate weighted scoring selection
+目标装甲板的选取，我们结合了操作手指定兵种及装甲板实际打击特征（距离枪口的平移向量、打击面积大小）进行加权求和，最终选取打击度得分最大的作为目标装甲板。- To select the target armor board, we combined the operator's designated arms and the actual strike characteristics of the armor plate (translation vector from the muzzle, strike area size) for weighted summation, and finally selected the target armor plate with the highest strike degree score. 
 ```
 /**
  *@brief: compare a_armor to b_armor according to their distance to lastArmor(if exit, not a default armor) and their area and armorNum
@@ -366,9 +369,9 @@ bool armorCompare(const ArmorBox & a_armor, const ArmorBox & b_armor, const Armo
 	return a_score > b_score; //judge whether a is more valuable according their score 根据打击度判断a是否比b更适合打击
 }
 ```  
-4. 角度解算具有两个计算模型分档运行  
+5. 角度解算具有两个计算模型分档运行 - Angle solver has two calculation models to run in stages
 
-### 展望  
-1. 卡尔曼滤波预测
-2. 深度学习识别
-3. 计算平台性能提升
+### 展望 - Outlook
+1. 卡尔曼滤波预测 - Kalman filter prediction
+2. 深度学习识别 - Deep learning recognition
+3. 计算平台性能提升 - Computing platform performance improvement
