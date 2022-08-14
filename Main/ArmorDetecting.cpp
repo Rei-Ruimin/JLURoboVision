@@ -10,7 +10,7 @@ ArmorDetector detector;
 //import angle solver
 AngleSolver angleSolver;
 
-int targetNum = 2;
+int targetNum = 1;
 Color ENEMYCOLOR = BLUE;
 bool bRun = true;
 double fps;
@@ -18,10 +18,10 @@ double fps;
 void* armorDetectingThread(void* PARAM)
 {
     //Set armor detector prop
-    detector.loadSVM("/home/mountain/Git/JLURoboVision/General/123svm.xml");
+    detector.loadSVM("/home/robomaster/Desktop/2022sentry/JLURoboVision/General/123svm.xml");
 
     //Set angle solver prop
-    angleSolver.setCameraParam("/home/mountain/Git/JLURoboVision/General/camera_params.xml", 1);
+    angleSolver.setCameraParam("/home/robomaster/Desktop/2022sentry/JLURoboVision/General/camera_params.xml", 1);
     angleSolver.setArmorSize(SMALL_ARMOR,135,125);
     angleSolver.setArmorSize(BIG_ARMOR,230,127);
     angleSolver.setBulletSpeed(15000);
@@ -85,7 +85,7 @@ void* armorDetectingThread(void* PARAM)
         //		6.bool textArmors_ON,	  是否输出装甲板信息
         //		7.bool textScores_ON	  是否输出打击度信息
         //					   1  2  3  4  5  6  7
-        detector.showDebugInfo(1, 1, 1, 1, 0, 0, 0);
+        detector.showDebugInfo(0, 1, 1, 1, 0, 0, 0);
 
         if(detector.isFoundArmor())
         {

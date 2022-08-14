@@ -6,8 +6,8 @@
   <cols>3</cols>
   <dt>d</dt>
   <data>
-    718.73176765 0. 320 0.
-    659.39458067 240 0. 0. 1.</data></CAMERA_MATRIX_1>
+    2042.18552784945 0. 402.875998724284 0.
+    1978.85998346700 177.309136726488 0. 0. 1.</data></CAMERA_MATRIX_1>
 <CAMERA_MATRIX_2 type_id="opencv-matrix">
   <rows>3</rows>
   <cols>3</cols>

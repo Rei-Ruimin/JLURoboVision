@@ -21,7 +21,7 @@ using namespace std;
 // extern variables
 extern pthread_mutex_t Globalmutex; // threads conflict due to image-updating
 extern pthread_cond_t GlobalCondCV; // threads conflict due to image-updating
-extern bool imageReadable;          // threads conflict due to image-updating
+extern bool imageReadable;          // threads confClict due to image-updating
 extern cv::Mat src;                     // Transfering buffer
 
 /**
@@ -40,8 +40,8 @@ void* armorDetectingThread(void* PARAM);
  */
 enum ArmorType
 {
-    SMALL_ARMOR = 0,
-    BIG_ARMOR = 1
+    SMALL_ARMOR = 1,
+    BIG_ARMOR = 0
 };
 
 /**

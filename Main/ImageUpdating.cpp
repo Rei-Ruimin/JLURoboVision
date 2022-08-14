@@ -1,17 +1,20 @@
-#include "GxCamera/GxCamera.h"
+#include "RealsenseCamera/RealsenseCamera.h"
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
 
-GxCamera camera;             // import Galaxy Camera
+           // import Galaxy Camera
 extern cv::Mat src;          // Transfering buffer
 
 void* imageUpdatingThread(void* PARAM)
 {
+    Camera camera(640, 480, 640, 480, 30);
+    camera.run(&src);
+    /*
     //init camrea lib
     camera.initLib();
 
-    //   open device      SN号
+    //   open device      SN号ww
     camera.openDevice("KJ0190120002");
 
     //Attention:   (Width-64)%2=0; (Height-64)%2=0; X%16=0; Y%2=0;
@@ -25,5 +28,5 @@ void* imageUpdatingThread(void* PARAM)
     camera.setWhiteBalanceParam(    true,    GX_AWB_LAMP_HOUSE_ADAPTIVE);
 
     //   Acquisition Start!
-    camera.acquisitionStart(&src);
+    camera.acquisitionStart(&src);*/
 }

@@ -176,7 +176,7 @@ void showLights(Mat & image, const vector<LightBar> & lights)
 		putText(lightDisplay, "LIGHTS NOT FOUND!", Point(100, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255), 1, 8, false);//title LIGHT_NOT_FOUND 大标题 “没找到灯条”
 	}
 	//show the result image 显示结果图
-	imshow("Lights Monitor", lightDisplay);
+    imshow("Lights Monitor", lightDisplay);
 }
 
 /**
@@ -216,7 +216,7 @@ void showArmors(Mat & image, const vector<ArmorBox> & armors, const ArmorBox & t
 		putText(armorDisplay, "ARMOR NOT FOUND!", Point(100, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 255), 1, 8, false);//title NOT FOUND 大标题 “没找到装甲板”
 	}
 	//show the result armors image 显示结果图
-	imshow("Armor Monitor", armorDisplay);
+    imshow("Armor Monitor", armorDisplay);
 }
 
 /**
@@ -304,9 +304,9 @@ void textScores(vector<ArmorBox> & armors, ArmorBox & lastArmor)
 void ArmorDetector::showDebugInfo(bool showSrcImg_ON, bool showSrcBinary_ON, bool showLights_ON, bool showArmors_ON, bool textLights_ON, bool textArmors_ON, bool textScores_ON)
 {
 	if (showSrcImg_ON)
-		imshow("srcImg", srcImg);
+        imshow("srcImg", srcImg);
 	if (showSrcBinary_ON)
-		imshow("srcImg_Binary", srcImg_binary);
+        imshow("srcImg_Binary", srcImg_binary);
 	if (showLights_ON)
 		showLights(srcImg, lights);
 	if (showArmors_ON)

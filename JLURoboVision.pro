@@ -3,14 +3,16 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-LIBS += -lgxiapi \
-        -lpthread \
-        -lX11
+LIBS += -lpthread \
+        -lX11 \
+        -lrealsense2
+#        `pkg-config opencv --libs`
 
 unix: PKGCONFIG += opencv
 INCLUDEPATH += /usr/local/include \
                /usr/local/include/opencv \
-               /usr/local/include/opencv2
+               /usr/local/include/opencv2 \
+
 
 # 编译生成的so文件（类似于windows下的dll文件）
 LIBS += /usr/local/lib/libopencv_calib3d.so \
@@ -39,20 +41,23 @@ SOURCES += \
         Armor/findLights.cpp \
         Armor/LightBar.cpp \
         Armor/matchArmors.cpp \
-        GxCamera/GxCamera.cpp \
+#        GxCamera/GxCamera.cpp \
         Main/ArmorDetecting.cpp \
         Main/ImageUpdating.cpp \
         Main/main.cpp \
-        Serial/Serial.cpp
+        Serial/Serial.cpp \
+#        RealsenseCamera/RealsenseCamera.cpp \
+        RealsenseCamera/Realsensecamera.cpp
 
 HEADERS += \
     AngleSolver/AngleSolver.h \
     Armor/Armor.h \
-    GxCamera/include/DxImageProc.h \
-    GxCamera/include/GxIAPI.h \
-    GxCamera/GxCamera.h \
+#    GxCamera/include/DxImageProc.h \
+#    GxCamera/include/GxIAPI.h \
+#    GxCamera/GxCamera.h \
     General/General.h \
-    Serial/Serial.h
+    Serial/Serial.h \
+    RealsenseCamera/RealsenseCamera.h
 
 DISTFILES += \
     123svm.xml \

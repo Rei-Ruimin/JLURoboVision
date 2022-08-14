@@ -1,31 +1,33 @@
-#include     <stdio.h>      
-#include     <stdlib.h>     
-#include     <unistd.h>     
-#include     <sys/types.h>  
-#include     <sys/stat.h>   
-#include     <fcntl.h>      
-#include     <termios.h>    
-#include     <errno.h>      
+#include     <stdio.h>
+#include     <stdlib.h>
+#include     <unistd.h>
+#include     <sys/types.h>
+#include     <sys/stat.h>
+#include     <fcntl.h>
+#include     <termios.h>
+#include     <errno.h>
 #include     <time.h>
 #include     <string.h>
 #include     "../Serial/Serial.h"
 //#define      TRUE   1
 //#define      FALSE  0
- 
-int Serial(int yaw,int pitch,bool fire,bool find)    
-{ 
 
-	int fd = -1;           //文件描述符，先定义一个与程序无关的值，防止fd为任意值导致程序出bug    
-    int err;               //返回调用函数的状态    
-    int len;  
+int Serial(int yaw,int pitch,bool fire,bool find)
+{
+    //REI: Camera is upside down July 23 2022
+//    yaw = -yaw;
+//    pitch = -pitch;
+    int fd = -1;           //文件描述符，先定义一个与程序无关的值，防止fd为任意值导致程序出bug
+    int err;               //返回调用函数的状态
+    int len;
     int flag=0;
-    //char rcv_buf[256];             
+    //char rcv_buf[256];
     //char send_buf[256];
     //判断是否打开串口
-    const char *dev[]  = {"/dev/ttyS0", "/dev/ttyTHS2"};
+    const char *dev[]  = {"/dev/ttyUSB0", "/dev/ttyTHS2"};
     if (find)
     {
-        fd = open(dev[1],O_RDWR | O_NOCTTY | O_NDELAY); //打开串口，返回文件描述符
+        fd = open(dev[0],O_RDWR | O_NOCTTY | O_NDELAY); //打开串口，返回文件描述符
      if(-1 == fd)
         {
             perror("Can't Open Serial Port");
@@ -39,6 +41,7 @@ int Serial(int yaw,int pitch,bool fire,bool find)
     {
         printf("No Armor,Close the Serial\n");
         return 0;
+
     }
 
      //fd=open("dev/ttyS1", O_RDWR);
@@ -57,47 +60,53 @@ int Serial(int yaw,int pitch,bool fire,bool find)
         char send_yaw[8]={'3','0','0','0','0','0','b','a'};
         char send_pitch[8]={'5','0','0','0','0','0','b','a'};
         char send_F[8]={'0','0','0','0','0','0','b','a'};
-		char send_dist[8] = { '0','0','0','0','0','0','b','a' };
+        char send_dist[8] = { '0','0','0','0','0','0','b','a' };
     if(yaw>0)
+
     {
         send_yaw[2]='1';
-        if(yaw<0)
-        {
-            yaw=abs(yaw);
-        }
+//        if(yaw<0)
+//        {
+//            yaw=abs(yaw);
+//        }
+    }
+    else {
+        yaw=abs(yaw);
     }
     if(pitch>0)
     {
         send_pitch[2]='1';
-        if(pitch<0)
-        {
-            pitch=abs(pitch);
-        }
+//        if(pitch<0)
+//        {
+//            pitch=abs(pitch);
+//        }
     }
-    
-	for (size_t i = 0; i < 4; i++)
+    else{
+        pitch=abs(pitch);
+    }
+
+    for (size_t i = 0; i < 3; i++)
     {
 
         send_yaw[5-i] = (yaw%10 + '0');
         yaw = yaw/10;
 
     }
-    for (size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < 3; i++)
     {
-        
+
         send_pitch[5-i] = (pitch%10 + '0');
         pitch = pitch/10;
 
     }
 
-	if (fire)
-    {
-        send_F[0]=1;
-    }else
-    {
-        send_F[0]=2;
+    if (fire) {
+        send_F[0]='1';
     }
-    
+    else {
+        send_F[0]='0';
+    }
+
     //输出测试
     for (size_t i = 0; i < 8; i++)
     {
@@ -105,26 +114,26 @@ int Serial(int yaw,int pitch,bool fire,bool find)
 
     }
 
-        //fgets(send_buf,256,stdin);   //输入内容，最大不超过40字节，fgets能吸收回车符，这样pc收到的数据就能自动换行     
+        //fgets(send_buf,256,stdin);   //输入内容，最大不超过40字节，fgets能吸收回车符，这样pc收到的数据就能自动换行
        if (flag)
        {
            len = UART0_Send(fd,send_F,8);
-           //usleep(100);（调试用）   
+           //usleep(100);（调试用）
            len = UART0_Send(fd,send_yaw,8);
-           //usleep(100);  
+           //usleep(100);
            len = UART0_Send(fd,send_pitch,8);
-		   //usleep(100);
-		   len = UART0_Send(fd, send_dist, 8);
+           //usleep(100);
+           len = UART0_Send(fd, send_dist, 8);
 
             if(len > 0)
             {
                 printf("time send %d data successful\n",len);
-            }       
-            else    
+            }
+            else
                 printf("send data failed!\n");
                 break;
-                              
-            usleep(100); 
+
+            usleep(100);
        }
        len = UART0_Recv(fd,rcv,8);
               if(len > 0)
@@ -165,11 +174,9 @@ int Serial(int yaw,int pitch,bool fire,bool find)
                 usleep(100);
 
 
-
-
   }
     UART0_Close(fd);
-} 
+}
 
 
 

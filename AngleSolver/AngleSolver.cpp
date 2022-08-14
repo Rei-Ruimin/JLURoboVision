@@ -196,6 +196,7 @@ void AngleSolver::showDebugInfo(bool showCurrentResult, bool showTVec, bool show
         putText(angleImage, "Y:" + to_string((int)(tVec.at<double>(1))), Point(250, 200), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 255), 1, 8, false);
         putText(angleImage, "Z:" + to_string((int)(tVec.at<double>(2))), Point(400, 200), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 255), 1, 8, false);
         imshow("AngleSolver",angleImage);
+        resizeWindow("AngleSolver", 150, 200);
     }
     if(showTVec)
     {
